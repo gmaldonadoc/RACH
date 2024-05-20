@@ -4,6 +4,7 @@
 #include <list>
 #include <vector>
 #include <deque>
+#include <unistd.h>
 #include "mac-entity.h"
 
 #include "../../core/eventScheduler/simulator.h"
@@ -88,7 +89,7 @@ public:
   
   // *******************Nuevo método para preparar el mensaje de RA********************//
   //void EnbMacEntity::PrepareRandomAccessResponseMessage(std::vector<RAPreambleIdealControlMessage *> *processedRAPreambleContainer);
-  void PrepareRandomAccessResponseMessage(std::vector<RAPreambleIdealControlMessage *> *processedRAPreambleContainer);
+  void PrepareRandomAccessResponseMessage(int raSlot, std::vector<RAPreambleIdealControlMessage *> *processedRAPreambleContainer);
 
   virtual int getCurrentPDCCHCCEs(void);
   virtual void updateCurrentPDCCHCCEs(int cces);
