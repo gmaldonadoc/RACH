@@ -1,0 +1,241 @@
+4.216 UE MTC 3 AC 0 QCI 9 started RA_Procedure CONTENTION-BASED
+4.216 UE MTC 4 AC 1 QCI 9 started RA_Procedure CONTENTION-BASED
+4.216 UE MTC 3 AC 0 QCI 9 sent RA_Preamble 47 4216 to ENodeB 2 posX 45.6251 posY -160.647 distance 167 CONS-STATE 2
+PRACH TX UE 3 PL = 111.673, Preamble Counter = 1, POWER = -6.32665
+PRACH RX UE 3 DISTANCE 167 POWER -122.736
+4.216 PRACH RX UE 3 ERROR  PRx -122.736 Target -118
+4.216 UE MTC 4 AC 1 QCI 9 sent RA_Preamble 37 4216 to ENodeB 2 posX -78.0137 posY 167.746 distance 185 CONS-STATE 2
+PRACH TX UE 4 PL = 115.322, Preamble Counter = 1, POWER = -2.67807
+PRACH RX UE 4 DISTANCE 185 POWER -116.716
+4.217 ENodeB 2 received RA_Preamble 47 from UE 3
+Preambulo: 47
+4.217 ENodeB 2 received RA_Preamble 37 from UE 4
+Preambulo: 37
+Archivo JSON creado correctamente: ./jsons/file_4216.json
+Ejecutando comando MATLAB: /dados/giancarlo/bin/matlab -batch "addpath('/dados/giancarlo/RACH'); process_json('./jsons/file_4216.json')" &
+Esperando a que MATLAB procese y cree el archivo JSON: ./jsons/file_4216_processed.json
+Archivo JSON leído correctamente: ./jsons/file_4216_processed.json
+Preamble: 47
+Bin values: 0.000205702 0.00161804 0.00330852 0.000964942 0.00535674 0.00230733 0.00316799 0.0023703 0.00137844 0.00621947 0.0201794 0.0208014 0.189142 0.159318 0.0227139 0.028873 0.0033014 0.0143111 0.00167144 0.00334104 0.00107912 0.00204318 0.00195431 0.000775193 
+Preamble: 37
+Bin values: 0.000945708 0.00227239 0.000871238 0.00104899 0.00554092 0.00151595 0.00747353 0.00505591 0.00521733 0.039843 0.252608 0.159918 0.00304496 0.0495578 0.00601487 0.00460916 0.000967729 0.00329696 0.000992812 0.00316715 0.00201724 0.00496982 0.00592411 0.00169501 
+4.226 UE MTC 3 AC 0 QCI 9 timeout RA_Response
+4.226 UE MTC 4 AC 1 QCI 9 timeout RA_Response
+4.226 UE 3 AC 0 QCI 9 backoff 0.003
+4.226 UE 4 AC 1 QCI 9 backoff 0.003
+4.231 UE MTC 3 AC 0 QCI 9 sent RA_Preamble 22 4231 to ENodeB 2 posX 45.6251 posY -160.647 distance 167 CONS-STATE 2
+PRACH TX UE 3 PL = 111.673, Preamble Counter = 2, POWER = -4.32665
+PRACH RX UE 3 DISTANCE 167 POWER -120.741
+4.231 PRACH RX UE 3 ERROR  PRx -120.741 Target -118
+4.231 UE MTC 4 AC 1 QCI 9 sent RA_Preamble 33 4231 to ENodeB 2 posX -78.0137 posY 167.746 distance 185 CONS-STATE 2
+PRACH TX UE 4 PL = 115.322, Preamble Counter = 2, POWER = -0.678065
+PRACH RX UE 4 DISTANCE 185 POWER -114.719
+4.232 ENodeB 2 received RA_Preamble 22 from UE 3
+Preambulo: 22
+4.232 ENodeB 2 received RA_Preamble 33 from UE 4
+Preambulo: 33
+Archivo JSON creado correctamente: ./jsons/file_4231.json
+Ejecutando comando MATLAB: /dados/giancarlo/bin/matlab -batch "addpath('/dados/giancarlo/RACH'); process_json('./jsons/file_4231.json')" &
+Esperando a que MATLAB procese y cree el archivo JSON: ./jsons/file_4231_processed.json
+Archivo JSON leído correctamente: ./jsons/file_4231_processed.json
+Preamble: 33
+Bin values: 0.00167945 0.00509026 0.00391139 0.00362915 0.00229688 0.00801324 0.0062987 0.00499693 0.0125282 0.194881 0.214374 0.00544915 0.0549409 0.0188679 0.000912831 0.00201268 0.0103761 0.00243755 0.00149868 0.00177888 0.00283987 0.00309931 0.00205603 0.00118333 
+Preamble: 22
+Bin values: 0.00161326 0.00867177 0.00388065 0.000143389 0.00786964 0.0135732 0.0246656 0.207848 0.153523 0.0130315 0.0341976 0.00633223 0.0118092 0.00274275 0.00217193 0.00181334 0.00279373 0.00443231 0.00167545 0.00152844 0.000683138 0.00135048 0.00131725 0.00164645 
+4.241 UE MTC 3 AC 0 QCI 9 timeout RA_Response
+4.241 UE MTC 4 AC 1 QCI 9 timeout RA_Response
+4.241 UE 3 AC 0 QCI 9 backoff 0.003
+4.241 UE 4 AC 1 QCI 9 backoff 0.003
+4.246 UE MTC 3 AC 0 QCI 9 sent RA_Preamble 2 4246 to ENodeB 2 posX 45.6251 posY -160.647 distance 167 CONS-STATE 2
+PRACH TX UE 3 PL = 111.673, Preamble Counter = 3, POWER = -2.32665
+PRACH RX UE 3 DISTANCE 167 POWER -118.747
+4.246 PRACH RX UE 3 ERROR  PRx -118.747 Target -118
+4.246 UE MTC 4 AC 1 QCI 9 sent RA_Preamble 52 4246 to ENodeB 2 posX -78.0137 posY 167.746 distance 185 CONS-STATE 2
+PRACH TX UE 4 PL = 115.322, Preamble Counter = 3, POWER = 1.32193
+PRACH RX UE 4 DISTANCE 185 POWER -112.722
+4.247 ENodeB 2 received RA_Preamble 2 from UE 3
+Preambulo: 2
+4.247 ENodeB 2 received RA_Preamble 52 from UE 4
+Preambulo: 52
+Archivo JSON creado correctamente: ./jsons/file_4246.json
+Ejecutando comando MATLAB: /dados/giancarlo/bin/matlab -batch "addpath('/dados/giancarlo/RACH'); process_json('./jsons/file_4246.json')" &
+Esperando a que MATLAB procese y cree el archivo JSON: ./jsons/file_4246_processed.json
+Archivo JSON leído correctamente: ./jsons/file_4246_processed.json
+Preamble: 52
+Bin values: 0.00308538 0.00250274 0.00563798 0.0044503 0.00370486 0.000848194 0.00331652 0.00352823 0.0022661 0.0091569 0.00634087 0.0340456 0.0110208 0.17924 0.183591 0.0242629 0.0183787 0.00103348 0.015488 0.00178963 0.00977695 0.00721487 0.00636211 0.00419093 
+Preamble: 2
+Bin values: 0.00201719 0.0141422 0.00155598 0.138371 0.291567 0.0764855 0.00519496 0.00557694 0.00292263 0.00202562 0.00147726 0.00168025 0.00304452 0.00113997 0.000566608 0.00175806 0.00214936 0.00198827 0.00189854 0.00121255 0.000855423 0.000423427 0.000774185 0.000730059 
+4.256 UE MTC 3 AC 0 QCI 9 timeout RA_Response
+4.256 UE MTC 4 AC 1 QCI 9 timeout RA_Response
+4.256 UE 3 AC 0 QCI 9 backoff 0.003
+4.256 UE 4 AC 1 QCI 9 backoff 0.003
+4.261 UE MTC 3 AC 0 QCI 9 sent RA_Preamble 18 4261 to ENodeB 2 posX 45.6251 posY -160.647 distance 167 CONS-STATE 2
+PRACH TX UE 3 PL = 111.673, Preamble Counter = 4, POWER = -0.326649
+PRACH RX UE 3 DISTANCE 167 POWER -116.752
+4.261 UE MTC 4 AC 1 QCI 9 sent RA_Preamble 18 4261 to ENodeB 2 posX -78.0137 posY 167.746 distance 185 CONS-STATE 2
+PRACH TX UE 4 PL = 115.322, Preamble Counter = 4, POWER = 3.32193
+PRACH RX UE 4 DISTANCE 185 POWER -110.726
+4.262 ENodeB 2 received RA_Preamble 18 from UE 3
+Preambulo: 18
+4.262 ENodeB 2 received RA_Preamble 18 from UE 4
+Preambulo: 18
+Archivo JSON creado correctamente: ./jsons/file_4261.json
+Ejecutando comando MATLAB: /dados/giancarlo/bin/matlab -batch "addpath('/dados/giancarlo/RACH'); process_json('./jsons/file_4261.json')" &
+Esperando a que MATLAB procese y cree el archivo JSON: ./jsons/file_4261_processed.json
+Archivo JSON leído correctamente: ./jsons/file_4261_processed.json
+Preamble: 18
+Bin values: 0.00637707 0.00829469 0.00903998 0.00741715 0.0916513 0.0405859 0.726541 0.88777 0.124519 0.11299 0.00719021 0.0617576 0.0132896 0.0160364 0.00844136 0.00347094 0.00599978 0.0116649 0.00229549 0.00251696 0.00143608 0.00200023 0.00213648 0.000312061 
+4.271 UE MTC 3 AC 0 QCI 9 timeout RA_Response
+4.271 UE MTC 4 AC 1 QCI 9 timeout RA_Response
+4.271 UE 3 AC 0 QCI 9 backoff 0.003
+4.271 UE 4 AC 1 QCI 9 backoff 0.003
+4.276 UE MTC 3 AC 0 QCI 9 sent RA_Preamble 20 4276 to ENodeB 2 posX 45.6251 posY -160.647 distance 167 CONS-STATE 2
+PRACH TX UE 3 PL = 111.673, Preamble Counter = 5, POWER = 1.67335
+PRACH RX UE 3 DISTANCE 167 POWER -114.757
+4.276 UE MTC 4 AC 1 QCI 9 sent RA_Preamble 33 4276 to ENodeB 2 posX -78.0137 posY 167.746 distance 185 CONS-STATE 2
+PRACH TX UE 4 PL = 115.322, Preamble Counter = 5, POWER = 5.32193
+PRACH RX UE 4 DISTANCE 185 POWER -108.729
+4.277 ENodeB 2 received RA_Preamble 20 from UE 3
+Preambulo: 20
+4.277 ENodeB 2 received RA_Preamble 33 from UE 4
+Preambulo: 33
+Archivo JSON creado correctamente: ./jsons/file_4276.json
+Ejecutando comando MATLAB: /dados/giancarlo/bin/matlab -batch "addpath('/dados/giancarlo/RACH'); process_json('./jsons/file_4276.json')" &
+Esperando a que MATLAB procese y cree el archivo JSON: ./jsons/file_4276_processed.json
+Archivo JSON leído correctamente: ./jsons/file_4276_processed.json
+Preamble: 33
+Bin values: 0.00162361 0.00512597 0.00399055 0.00359973 0.00227001 0.00811932 0.00645784 0.0050175 0.0127631 0.195442 0.215219 0.00555568 0.0545967 0.0186497 0.000964193 0.00197394 0.0102351 0.00236865 0.00157394 0.00178801 0.00279643 0.00308467 0.00207212 0.00118147 
+Preamble: 20
+Bin values: 0.000554772 0.00480661 0.000521396 0.00100055 0.0163497 0.0101928 0.0821036 0.25367 0.0997311 0.0227741 0.0171384 0.00433968 0.00872788 0.000797937 0.00306705 0.0027921 0.00045316 0.00323412 0.000128466 0.00204399 0.00312933 0.000518027 0.00249078 0.0023111 
+4.286 UE MTC 3 AC 0 QCI 9 timeout RA_Response
+4.286 UE MTC 4 AC 1 QCI 9 timeout RA_Response
+4.286 UE 3 AC 0 QCI 9 backoff 0.003
+4.286 UE 4 AC 1 QCI 9 backoff 0.003
+4.291 UE MTC 3 AC 0 QCI 9 sent RA_Preamble 42 4291 to ENodeB 2 posX 45.6251 posY -160.647 distance 167 CONS-STATE 2
+PRACH TX UE 3 PL = 111.673, Preamble Counter = 6, POWER = 3.67335
+PRACH RX UE 3 DISTANCE 167 POWER -112.762
+4.291 UE MTC 4 AC 1 QCI 9 sent RA_Preamble 50 4291 to ENodeB 2 posX -78.0137 posY 167.746 distance 185 CONS-STATE 2
+PRACH TX UE 4 PL = 115.322, Preamble Counter = 6, POWER = 7.32193
+PRACH RX UE 4 DISTANCE 185 POWER -106.732
+4.292 ENodeB 2 received RA_Preamble 42 from UE 3
+Preambulo: 42
+4.292 ENodeB 2 received RA_Preamble 50 from UE 4
+Preambulo: 50
+Archivo JSON creado correctamente: ./jsons/file_4291.json
+Ejecutando comando MATLAB: /dados/giancarlo/bin/matlab -batch "addpath('/dados/giancarlo/RACH'); process_json('./jsons/file_4291.json')" &
+Esperando a que MATLAB procese y cree el archivo JSON: ./jsons/file_4291_processed.json
+Archivo JSON leído correctamente: ./jsons/file_4291_processed.json
+Preamble: 50
+Bin values: 0.00281429 0.00153251 0.00263277 0.00436474 0.00113485 0.00294435 0.00383089 0.00120273 0.00332924 0.000926687 0.0277056 0.0206071 0.0732198 0.251112 0.0957826 0.0155368 0.0110341 0.00827474 0.00782765 0.00541522 0.00622191 0.000799036 0.000890997 0.00169551 
+Preamble: 42
+Bin values: 0.00276551 0.000423008 0.0018498 0.003563 0.00284207 0.00463036 0.00187848 0.0020326 0.00306466 0.00978014 0.0297346 0.205589 0.152601 0.00915403 0.0350887 0.00274145 0.0118436 0.00190879 0.00144398 0.0042293 0.00789435 0.00294112 0.00389088 0.00148855 
+4.301 UE MTC 3 AC 0 QCI 9 timeout RA_Response
+4.301 UE MTC 4 AC 1 QCI 9 timeout RA_Response
+4.301 UE 3 AC 0 QCI 9 backoff 0.003
+4.301 UE 4 AC 1 QCI 9 backoff 0.003
+4.306 UE MTC 3 AC 0 QCI 9 sent RA_Preamble 8 4306 to ENodeB 2 posX 45.6251 posY -160.647 distance 167 CONS-STATE 2
+PRACH TX UE 3 PL = 111.673, Preamble Counter = 7, POWER = 5.67335
+PRACH RX UE 3 DISTANCE 167 POWER -110.767
+4.306 UE MTC 4 AC 1 QCI 9 sent RA_Preamble 42 4306 to ENodeB 2 posX -78.0137 posY 167.746 distance 185 CONS-STATE 2
+PRACH TX UE 4 PL = 115.322, Preamble Counter = 7, POWER = 9.32193
+PRACH RX UE 4 DISTANCE 185 POWER -104.734
+4.307 ENodeB 2 received RA_Preamble 8 from UE 3
+Preambulo: 8
+4.307 ENodeB 2 received RA_Preamble 42 from UE 4
+Preambulo: 42
+Archivo JSON creado correctamente: ./jsons/file_4306.json
+Ejecutando comando MATLAB: /dados/giancarlo/bin/matlab -batch "addpath('/dados/giancarlo/RACH'); process_json('./jsons/file_4306.json')" &
+Esperando a que MATLAB procese y cree el archivo JSON: ./jsons/file_4306_processed.json
+Archivo JSON leído correctamente: ./jsons/file_4306_processed.json
+Preamble: 42
+Bin values: 0.0029338 0.000428643 0.00186691 0.00368332 0.00293484 0.00485937 0.00193956 0.00204721 0.00316189 0.0101493 0.0300563 0.207018 0.15262 0.00920629 0.0343805 0.00261011 0.0115921 0.00186723 0.0014071 0.00414063 0.00763637 0.00288678 0.00378947 0.0014792 
+Preamble: 8
+Bin values: 0.00450361 0.00451343 0.0245585 0.00575823 0.135384 0.240212 0.0687517 0.007691 0.000842586 0.00479694 0.00215314 0.00795372 0.00296904 0.00709016 0.00519181 0.00336878 0.00147827 0.001144 0.00247165 0.00384093 0.00248847 0.00180569 0.000453058 0.000949378 
+4.316 UE MTC 3 AC 0 QCI 9 timeout RA_Response
+4.316 UE MTC 4 AC 1 QCI 9 timeout RA_Response
+4.316 UE 3 AC 0 QCI 9 backoff 0.003
+4.316 UE 4 AC 1 QCI 9 backoff 0.003
+4.321 UE MTC 3 AC 0 QCI 9 sent RA_Preamble 37 4321 to ENodeB 2 posX 45.6251 posY -160.647 distance 167 CONS-STATE 2
+PRACH TX UE 3 PL = 111.673, Preamble Counter = 8, POWER = 7.67335
+PRACH RX UE 3 DISTANCE 167 POWER -108.772
+4.321 UE MTC 4 AC 1 QCI 9 sent RA_Preamble 16 4321 to ENodeB 2 posX -78.0137 posY 167.746 distance 185 CONS-STATE 2
+PRACH TX UE 4 PL = 115.322, Preamble Counter = 8, POWER = 11.3219
+PRACH RX UE 4 DISTANCE 185 POWER -102.737
+4.322 ENodeB 2 received RA_Preamble 37 from UE 3
+Preambulo: 37
+4.322 ENodeB 2 received RA_Preamble 16 from UE 4
+Preambulo: 16
+Archivo JSON creado correctamente: ./jsons/file_4321.json
+Ejecutando comando MATLAB: /dados/giancarlo/bin/matlab -batch "addpath('/dados/giancarlo/RACH'); process_json('./jsons/file_4321.json')" &
+Esperando a que MATLAB procese y cree el archivo JSON: ./jsons/file_4321_processed.json
+Archivo JSON leído correctamente: ./jsons/file_4321_processed.json
+Preamble: 37
+Bin values: 0.000962093 0.00225407 0.000860528 0.000972292 0.00557357 0.00143336 0.00753598 0.00489593 0.00529867 0.0399312 0.252834 0.158236 0.0031065 0.0495347 0.00611173 0.00434926 0.00104329 0.00328008 0.000966995 0.00304674 0.00214048 0.00512606 0.0059169 0.00166998 
+Preamble: 16
+Bin values: 0.000714583 0.00279314 0.0019118 0.015185 0.0225076 0.0604432 0.294126 0.174337 0.0231929 0.0188851 0.00376821 0.0109926 0.00165153 0.00413148 0.00170722 0.00266185 0.00303486 0.000384322 0.00271024 0.000889664 0.00306296 0.000738043 0.00188238 0.00203336 
+4.331 UE MTC 3 AC 0 QCI 9 timeout RA_Response
+4.331 UE MTC 4 AC 1 QCI 9 timeout RA_Response
+4.331 UE 3 AC 0 QCI 9 backoff 0.003
+4.331 UE 4 AC 1 QCI 9 backoff 0.003
+4.336 UE MTC 3 AC 0 QCI 9 sent RA_Preamble 27 4336 to ENodeB 2 posX 45.6251 posY -160.647 distance 167 CONS-STATE 2
+PRACH TX UE 3 PL = 111.673, Preamble Counter = 9, POWER = 9.67335
+PRACH RX UE 3 DISTANCE 167 POWER -106.776
+4.336 UE MTC 4 AC 1 QCI 9 sent RA_Preamble 20 4336 to ENodeB 2 posX -78.0137 posY 167.746 distance 185 CONS-STATE 2
+PRACH TX UE 4 PL = 115.322, Preamble Counter = 9, POWER = 13.3219
+PRACH RX UE 4 DISTANCE 185 POWER -100.739
+4.337 ENodeB 2 received RA_Preamble 27 from UE 3
+Preambulo: 27
+4.337 ENodeB 2 received RA_Preamble 20 from UE 4
+Preambulo: 20
+Archivo JSON creado correctamente: ./jsons/file_4336.json
+Ejecutando comando MATLAB: /dados/giancarlo/bin/matlab -batch "addpath('/dados/giancarlo/RACH'); process_json('./jsons/file_4336.json')" &
+Esperando a que MATLAB procese y cree el archivo JSON: ./jsons/file_4336_processed.json
+Archivo JSON leído correctamente: ./jsons/file_4336_processed.json
+Preamble: 27
+Bin values: 0.00153037 0.00102029 0.00426353 0.00134134 0.00622657 0.00431347 0.0124302 0.0398463 0.227851 0.1586 0.00848338 0.0398181 0.00584137 0.00555225 0.00737628 0.0042052 0.00314024 0.00302148 0.0036289 0.00313049 0.00468179 0.00267069 0.00102659 0.000658252 
+Preamble: 20
+Bin values: 0.000538504 0.00458593 0.000508293 0.000961401 0.0160582 0.0100947 0.0811027 0.252832 0.100274 0.0230008 0.0172777 0.00448103 0.00897772 0.000807761 0.00312218 0.00282829 0.000471343 0.00340252 0.000132839 0.00207903 0.00309881 0.000521189 0.00249883 0.00230913 
+4.346 UE MTC 3 AC 0 QCI 9 timeout RA_Response
+4.346 UE MTC 4 AC 1 QCI 9 timeout RA_Response
+4.346 UE 3 AC 0 QCI 9 backoff 0.003
+4.346 UE 4 AC 1 QCI 9 backoff 0.003
+4.351 UE MTC 3 AC 0 QCI 9 sent RA_Preamble 23 4351 to ENodeB 2 posX 45.6251 posY -160.647 distance 167 CONS-STATE 2
+PRACH TX UE 3 PL = 111.673, Preamble Counter = 10, POWER = 11.6734
+PRACH RX UE 3 DISTANCE 167 POWER -104.78
+4.351 UE MTC 4 AC 1 QCI 9 sent RA_Preamble 33 4351 to ENodeB 2 posX -78.0137 posY 167.746 distance 185 CONS-STATE 2
+PRACH TX UE 4 PL = 115.322, Preamble Counter = 10, POWER = 15.3219
+PRACH RX UE 4 DISTANCE 185 POWER -98.7414
+4.352 ENodeB 2 received RA_Preamble 23 from UE 3
+Preambulo: 23
+4.352 ENodeB 2 received RA_Preamble 33 from UE 4
+Preambulo: 33
+Archivo JSON creado correctamente: ./jsons/file_4351.json
+Ejecutando comando MATLAB: /dados/giancarlo/bin/matlab -batch "addpath('/dados/giancarlo/RACH'); process_json('./jsons/file_4351.json')" &
+Esperando a que MATLAB procese y cree el archivo JSON: ./jsons/file_4351_processed.json
+Archivo JSON leído correctamente: ./jsons/file_4351_processed.json
+Preamble: 33
+Bin values: 0.001638 0.00513202 0.00399373 0.00364891 0.00229599 0.00815666 0.00645169 0.00508867 0.0127833 0.195614 0.214905 0.00549663 0.0545177 0.0186228 0.000936714 0.00198034 0.0101796 0.0023659 0.00155963 0.00181179 0.00278616 0.00305181 0.00203623 0.00119118 
+Preamble: 23
+Bin values: 0.000534623 0.00669131 0.00424233 0.00132934 0.00181367 0.0127605 0.0106486 0.194251 0.231338 0.01854 0.0472167 0.0156859 0.00738608 0.00181188 0.00201976 0.0020304 0.00774502 0.00207674 0.00400009 0.00113758 0.000472414 0.00238114 0.000267542 0.00270139 
+4.361 UE MTC 3 AC 0 QCI 9 timeout RA_Response
+4.361 UE MTC 3 AC 0 QCI 9 stopped RA_Procedure incorrectly. CONS 0.125405 CONTENTION-BASED
+4.361 UE MTC 4 AC 1 QCI 9 timeout RA_Response
+4.361 UE MTC 4 AC 1 QCI 9 stopped RA_Procedure incorrectly. CONS 0.126394 CONTENTION-BASED
+--------------------------
+UE  #  3 |  Tx:       10 |  Rx:        0 |  RxTx:        0 |   ND :     4352 |   ALL:     4362 | ETx:   0.0102 | ERx:   0.0000 | ERxTx:   0.0000 | E ND :   3.7123 | E ALL:   3.7225
+UE  #  4 |  Tx:       10 |  Rx:        0 |  RxTx:        0 |   ND :     4352 |   ALL:     4362 | ETx:   0.0112 | ERx:   0.0000 | ERxTx:   0.0000 | E ND :   3.7123 | E ALL:   3.7235
+END--------------------------
+Total Consumption [J]: 7.4460
+Total Conn  [ms]: 20
+Total Rx    [ms]: 0
+Total Tx    [ms]: 20
+Total RxTx  [ms]: 0
+Total ND    [ms]: 8704
+ETotal Conn  [J]: 0.0215
+ETotal Rx    [J]: 0.0000
+ETotal Tx    [J]: 0.0215
+ETotal RxTx  [J]: 0.0000
+ETotal ND    [J]: 7.4245
+ETotal Video [J]: 0.0000
+ETotal Voip  [J]: 0.0000
+ETotal CBR   [J]: 0.0000
