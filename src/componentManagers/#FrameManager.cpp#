@@ -1,0 +1,399 @@
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
+/*
+ * Copyright (c) 2010,2011,2012,2013 TELEMATICS LAB, Politecnico di Bari
+ *
+ * This file is part of LTE-Sim
+ *
+ * LTE-Sim is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation;
+ *
+ * LTE-Sim is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LTE-Sim; if not, see <http://www.gnu.org/licenses/>.
+ *
+ * Author: Giuseppe Piro <g.piro@poliba.it>
+ */
+
+#include "FrameManager.h"
+#include "InformationManager.h"
+#include "../load-parameters.h"
+#include "../device/ENodeB.h"
+#include "../device/HeNodeB.h"
+
+#include "../device/UserEquipment.h"
+#include "../protocolStack/mac/ue-mac-entity.h"
+#include "../drx/drx-manager.h"
+
+FrameManager *FrameManager::ptr = NULL;
+
+FrameManager::FrameManager() {
+  m_nbFrames = -1;
+  m_nbSubframes = -1;
+  m_TTICounter = -1;
+  m_frameStructure = FrameManager::FRAME_STRUCTURE_FDD;
+  m_TDDFrameConfiguration = 1;
+
+  m_RACHsCounter = 0;
+}
+
+FrameManager::~FrameManager() {
+}
+
+void
+FrameManager::SetFrameStructure(FrameManager::FrameStructure frameStructure) {
+  m_frameStructure = frameStructure;
+}
+
+FrameManager::FrameStructure
+FrameManager::GetFrameStructure(void) const {
+  return m_frameStructure;
+}
+
+void
+FrameManager::SetTDDFrameConfiguration(int configuration) {
+  if (configuration < 0 && configuration > 6) {
+    m_TDDFrameConfiguration = 0;
+  } else {
+    m_TDDFrameConfiguration = configuration;
+  }
+}
+
+int
+FrameManager::GetTDDFrameConfiguration(void) const {
+  return m_TDDFrameConfiguration;
+}
+
+int
+FrameManager::GetSubFrameType(int nbSubFrame) {
+  return TDDConfiguration [GetTDDFrameConfiguration()][nbSubFrame - 1];
+}
+
+void
+FrameManager::UpdateNbFrames(void) {
+  m_nbFrames++;
+}
+
+int
+FrameManager::GetNbFrames(void) const {
+  return m_nbFrames;
+}
+
+void
+FrameManager::UpdateNbSubframes(void) {
+  m_nbSubframes++;
+}
+
+void
+FrameManager::ResetNbSubframes(void) {
+  m_nbSubframes = -1;
+}
+
+int
+FrameManager::GetNbSubframes(void) const {
+  return m_nbSubframes;
+}
+
+void
+FrameManager::UpdateTTIcounter() {
+  m_TTICounter++;
+}
+
+unsigned long
+FrameManager::GetTTICounter() const {
+  return m_TTICounter;
+}
+
+void
+FrameManager::ResetRACHCounter() {
+  m_RACHsCounter = 0;
+}
+
+unsigned int
+FrameManager::GetRACHCounter() const {
+  return m_RACHsCounter;
+}
+
+void
+FrameManager::Start(void) {
+  //Simulator::Init()->Schedule(0.0, &FrameManager::StartFrame, this);
+  StartFrame();
+}
+
+void
+FrameManager::StartFrame(void) {
+  UpdateNbFrames();
+  //Simulator::Init()->Schedule(0.0, &FrameManager::StartSubframe, this);
+  StartSubframe();
+}
+
+void
+FrameManager::StopFrame(void) {
+  bool finish = true;
+  std::vector<UserEquipment*> *UEs = GetNetworkManager()->GetUserEquipmentContainer();
+  std::vector<UserEquipment*>::iterator iter;
+  UserEquipment *record;
+
+  if (UPLINK == false) {
+    for (iter = UEs->begin(); iter != UEs->end(); iter++) {
+      record = *iter;
+      if (((UeMacEntity*) record->GetProtocolStack()->GetMacEntity())->getRAStopped() == false) {
+        //std::cerr << Simulator::Init()->Now() << " " << record->GetIDNetworkNode() << std::endl;
+        finish = false;
+        break;
+      }
+    }
+
+    if (finish == true) {
+      Simulator::Init()->Stop();
+    } else {
+      //Simulator::Init()->Schedule(0.0, &FrameManager::StartFrame, this);
+      StartFrame();
+    }
+  } else {
+    //Simulator::Init()->Schedule(0.0, &FrameManager::StartFrame, this);
+    StartFrame();
+  }
+}
+
+void
+FrameManager::StartSubframe(void) {
+  Simulator::Init()->Schedule(0.001, &FrameManager::StopSubframe, this);
+  
+  UpdateTTIcounter();
+  UpdateNbSubframes();
+  
+  std::vector<ENodeB*> *records = GetNetworkManager()->GetENodeBContainer();
+  std::vector<ENodeB*>::iterator iter;
+  ENodeB *record;
+
+  //std::cerr << Simulator::Init()->Now() << " TTI " << m_TTICounter << std::endl;
+
+  /* Update */
+  /*std::vector<UserEquipment*> *UEs = GetNetworkManager()->GetUserEquipmentContainer();
+  std::vector<UserEquipment*>::iterator iterUe;
+  UserEquipment *recordUE;
+  for (iterUe = UEs->begin(); iterUe != UEs->end(); iterUe++) {
+    recordUE = *iterUe;
+
+    // Update the Energy Consumption of the PDCCH every TTI
+    recordUE->GetEnergyModel()->UpdateEnergyConsumptionOnPdcch(0);
+
+    //recordUE->GetDrx();
+
+  }*/
+  /* ------ */
+
+  if (InformationManager::Init()->ra_PRACH_MaskIndex < 3) {
+    if ((GetNbFrames() % 2 == 0) && (RACHConfigurationIndex[InformationManager::Init()->ra_PRACH_MaskIndex][GetNbSubframes()])) {
+      m_RACHsCounter++;
+
+      //std::vector<UserEquipment*> *UEs = GetNetworkManager()->GetUserEquipmentContainer();
+      std::vector<UserEquipment*> *UEs = GetNetworkManager()->GetUserEquipmentsDoingRandomAccess();
+
+      std::vector<UserEquipment*>::iterator iterUe;
+      UserEquipment *recordUE;
+      for (iterUe = UEs->begin(); iterUe != UEs->end(); iterUe++) {
+        recordUE = *iterUe;
+        //std::cerr << Simulator::Init()->Now() << " Start UE RA" << std::endl;
+        /*if (((UeMacEntity*) recordUE->GetProtocolStack()->GetMacEntity())->GetDoingRAProcedure()) {
+          //((UeMacEntity*) record->GetProtocolStack()->GetMacEntity())->SendRAPreamble();
+          //recordUE->GetEnergyModel()->UpdateEnergyConsumptionOnPdcch(10);
+          Simulator::Init()->Schedule(0.000, &UeMacEntity::SendRAPreamble, (UeMacEntity*) recordUE->GetProtocolStack()->GetMacEntity());
+        }*/
+        if (((UeMacEntity*) recordUE->GetProtocolStack()->GetMacEntity())->GetDoingRAProcedure()) {
+          DRXManager *drxManager = recordUE->GetDRXManager();
+          if (drxManager != NULL) {
+            if (drxManager->getStatus() != DRXManager::LIGHT) {//If can tx in that TTI send
+#ifdef DRX_DEBUG
+              std::cerr << Simulator::Init()->Now() << " [DRX] RandomAccess scheduled this TTI" << std::endl;
+#endif
+              Simulator::Init()->Schedule(0.000, &UeMacEntity::SendRAPreamble, (UeMacEntity*) recordUE->GetProtocolStack()->GetMacEntity());
+            }//Else, do nothing, wait the next TTI
+            else {
+#ifdef DRX_DEBUG
+              std::cerr << Simulator::Init()->Now() << " [DRX] RandomAccess waiting to be performed" << std::endl;
+#endif
+            }
+          } else {//Normal functionality. UE does not have DRX configured
+            Simulator::Init()->Schedule(0.000, &UeMacEntity::SendRAPreamble, (UeMacEntity*) recordUE->GetProtocolStack()->GetMacEntity());
+          }
+        }
+      }
+    }
+  } else {
+    if (RACHConfigurationIndex[InformationManager::Init()->ra_PRACH_MaskIndex][GetNbSubframes()]) {
+      m_RACHsCounter++;
+      //std::cerr << Simulator::Init()->Now() << " RACH" << std::endl;
+      //std::vector<UserEquipment*> *UEs = GetNetworkManager()->GetUserEquipmentContainer();
+      std::vector<UserEquipment*> *UEs = GetNetworkManager()->GetUserEquipmentsDoingRandomAccess();
+
+      std::vector<UserEquipment*>::iterator iterUe;
+      UserEquipment *recordUE;
+      for (iterUe = UEs->begin(); iterUe != UEs->end(); iterUe++) {
+        recordUE = *iterUe;
+        //std::cerr << Simulator::Init()->Now() << " Start UE RA" << std::endl;
+        /*if (((UeMacEntity*) recordUE->GetProtocolStack()->GetMacEntity())->GetDoingRAProcedure()) {
+          //((UeMacEntity*) record->GetProtocolStack()->GetMacEntity())->SendRAPreamble();
+          //recordUE->GetEnergyModel()->UpdateEnergyConsumptionOnPdcch(10);
+          Simulator::Init()->Schedule(0.000, &UeMacEntity::SendRAPreamble, (UeMacEntity*) recordUE->GetProtocolStack()->GetMacEntity());
+        }*/
+        if (((UeMacEntity*) recordUE->GetProtocolStack()->GetMacEntity())->GetDoingRAProcedure()) {
+          //((UeMacEntity*) record->GetProtocolStack()->GetMacEntity())->SendRAPreamble();
+          DRXManager* drxManager = recordUE->GetDRXManager();
+          if (drxManager != NULL) {
+            if (drxManager->getStatus() != DRXManager::LIGHT) {//If can tx in that TTI send
+#ifdef DRX_DEBUG
+              std::cerr << Simulator::Init()->Now() << " [DRX] RandomAccess scheduled this TTI" << std::endl;
+#endif
+              Simulator::Init()->Schedule(0.000, &UeMacEntity::SendRAPreamble, (UeMacEntity*) recordUE->GetProtocolStack()->GetMacEntity());
+            }//Else, do nothing, wait the next TTI
+            else {
+#ifdef DRX_DEBUG
+              std::cerr << Simulator::Init()->Now() << " [DRX] RandomAccess waiting to be performed" << std::endl;
+#endif
+            }
+          } else {//Normal functionality. UE does not have DRX configured
+            //std::cerr << Simulator::Init()->Now() << " RACH " << GetRACHCounter() << std::endl;
+            Simulator::Init()->Schedule(0.000, &UeMacEntity::SendRAPreamble, (UeMacEntity*) recordUE->GetProtocolStack()->GetMacEntity());
+          }
+        }
+      }
+    }
+  }
+
+  for (iter = records->begin(); iter != records->end(); iter++) {
+    record = *iter;
+    //std::cerr << Simulator::Init()->Now() << " Subframe Start eNB" << std::endl;
+    ((EnbMacEntity*) record->GetProtocolStack()->GetMacEntity())->ResetAllocatedULRBs();
+  }
+
+  Simulator::Init()->Schedule(0.0, &FrameManager::ResourceAllocation, this);
+}
+
+void
+FrameManager::StopSubframe(void) {
+  if (GetNbSubframes() == 9) {
+    ResetNbSubframes();
+    //Simulator::Init()->Schedule(0.0, &FrameManager::StopFrame, this);
+    StopFrame();
+  } else {
+    //Simulator::Init()->Schedule(0.0, &FrameManager::StartSubframe, this);
+    StartSubframe();
+  }
+}
+
+NetworkManager*
+FrameManager::GetNetworkManager(void) {
+  return NetworkManager::Init();
+}
+
+void
+FrameManager::UpdateUserPosition(void) {
+  GetNetworkManager()->UpdateUserPosition(GetTTICounter() / 1000.0);
+}
+
+bool
+FrameManager::IsRACHSubframe(void) {
+  if (InformationManager::Init()->ra_PRACH_MaskIndex < 3) {
+    if ((GetNbFrames() % 2 == 0) && (RACHConfigurationIndex[InformationManager::Init()->ra_PRACH_MaskIndex][GetNbSubframes()])) {
+      return true;
+    }
+  } else {
+    if (RACHConfigurationIndex[InformationManager::Init()->ra_PRACH_MaskIndex][GetNbSubframes()]) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+void
+FrameManager::ResourceAllocation(void) {
+  std::vector<ENodeB*> *records = GetNetworkManager()->GetENodeBContainer();
+  std::vector<ENodeB*>::iterator iter;
+  ENodeB *record;
+  for (iter = records->begin(); iter != records->end(); iter++) {
+    record = *iter;
+
+#ifdef FRAME_MANAGER_DEBUG
+    std::cout << " FRAME_MANAGER_DEBUG: RBs allocation for eNB " <<
+            record->GetIDNetworkNode() << std::endl;
+#endif
+
+    if (GetFrameStructure() == FrameManager::FRAME_STRUCTURE_FDD) {
+      //record->ResourceBlocksAllocation ();
+      Simulator::Init()->Schedule(0.000, &ENodeB::ResourceBlocksAllocation, record);
+    } else {
+      //see frame configuration in TDDConfiguration
+      if (GetSubFrameType(GetNbSubframes()) == 0) {
+#ifdef FRAME_MANAGER_DEBUG
+        std::cout << " FRAME_MANAGER_DEBUG: SubFrameType = "
+                "	SUBFRAME_FOR_DOWNLINK " << std::endl;
+#endif
+        //record->DownlinkResourceBlokAllocation();
+        Simulator::Init()->Schedule(0.000, &ENodeB::DownlinkResourceBlokAllocation, record);
+      } else if (GetSubFrameType(GetNbSubframes()) == 1) {
+#ifdef FRAME_MANAGER_DEBUG
+        std::cout << " FRAME_MANAGER_DEBUG: SubFrameType = "
+                "	SUBFRAME_FOR_UPLINK " << std::endl;
+#endif
+        //record->UplinkResourceBlockAllocation();
+        Simulator::Init()->Schedule(0.000, &ENodeB::UplinkResourceBlockAllocation, record);
+      } else {
+#ifdef FRAME_MANAGER_DEBUG
+        std::cout << " FRAME_MANAGER_DEBUG: SubFrameType = "
+                "	SPECIAL_SUBFRAME" << std::endl;
+#endif
+      }
+    }
+  }
+
+  std::vector<HeNodeB*> *records_2 = GetNetworkManager()->GetHomeENodeBContainer();
+  std::vector<HeNodeB*>::iterator iter_2;
+  HeNodeB *record_2;
+  for (iter_2 = records_2->begin(); iter_2 != records_2->end(); iter_2++) {
+    record_2 = *iter_2;
+
+#ifdef FRAME_MANAGER_DEBUG
+    std::cout << " FRAME_MANAGER_DEBUG: RBs allocation for eNB " <<
+            record_2->GetIDNetworkNode() << std::endl;
+#endif
+
+    if (GetFrameStructure() == FrameManager::FRAME_STRUCTURE_FDD) {
+      //record_2->ResourceBlocksAllocation ();
+      Simulator::Init()->Schedule(0.000, &ENodeB::ResourceBlocksAllocation, record_2);
+    } else {
+      //see frame configuration in TDDConfiguration
+      if (GetSubFrameType(GetNbSubframes()) == 0) {
+#ifdef FRAME_MANAGER_DEBUG
+        std::cout << " FRAME_MANAGER_DEBUG: SubFrameType = "
+                "	SUBFRAME_FOR_DOWNLINK " << std::endl;
+#endif
+        //record_2->DownlinkResourceBlokAllocation();
+        Simulator::Init()->Schedule(0.000, &ENodeB::DownlinkResourceBlokAllocation, record_2);
+      } else if (GetSubFrameType(GetNbSubframes()) == 1) {
+#ifdef FRAME_MANAGER_DEBUG
+        std::cout << " FRAME_MANAGER_DEBUG: SubFrameType = "
+                "	SUBFRAME_FOR_UPLINK " << std::endl;
+#endif
+        //record_2->UplinkResourceBlockAllocation();
+        Simulator::Init()->Schedule(0.0, &ENodeB::UplinkResourceBlockAllocation, record_2);
+      } else {
+#ifdef FRAME_MANAGER_DEBUG
+        std::cout << " FRAME_MANAGER_DEBUG: SubFrameType = "
+                "	SPECIAL_SUBFRAME" << std::endl;
+#endif
+      }
+    }
+  }
+}
+
+int
+FrameManager::GetSFN() {
+  return GetNbFrames() % 1024;
+}
