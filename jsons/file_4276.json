@@ -1,0 +1,20 @@
+{
+  "Preambles": [
+    {
+      "Preamble": 20,
+      "RARNTI": 4276,
+      "SourceDevice": 3,
+      "PosX": 45.625061,
+      "PosY": -160.646674,
+      "Distance": 167.000000
+    },
+    {
+      "Preamble": 33,
+      "RARNTI": 4276,
+      "SourceDevice": 4,
+      "PosX": -78.013732,
+      "PosY": 167.746409,
+      "Distance": 185.000000
+    }
+  ]
+}
