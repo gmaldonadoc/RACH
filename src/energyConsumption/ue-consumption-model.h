@@ -1,0 +1,153 @@
+/*
+ * File:   ue-consumption-model.h
+ * Author: tiago
+ *
+ * Created on August 25, 2016, 3:15 PM
+ */
+
+#ifndef UE_CONSUMPTION_MODEL_H
+#define	UE_CONSUMPTION_MODEL_H
+
+#include "../drx/drx-manager.h"
+#include "../device/UserEquipment.h"
+
+class ConsumptionModel {
+public:
+
+  ConsumptionModel(); //construtor
+
+  void setStateUE(DRXManager::State newState, unsigned int time, unsigned int duration);
+  void setStateUE(DRXManager::State newState, DRXManager::Action newAction);
+
+  void settLightSleep(unsigned int t);
+  void settDeepSleep(unsigned int t);
+  void settActiveNoData(unsigned int t);
+  void settActiveRx(unsigned int t);
+  void settActiveTx(unsigned int t);
+  void settActiveRxTx(unsigned int t);
+  void settLightActive(void);
+
+  unsigned int gettLightSleep(void);
+  unsigned int gettDeepSleep(void);
+  unsigned int gettActiveNoData(void);
+  unsigned int gettActiveRx(void);
+  unsigned int gettActiveTx(void);
+  unsigned int gettActiveRxTx(void);
+  unsigned int gettLightActive(void);
+  unsigned int gettSleepToActive(void);
+  unsigned int gettActiveToSleep(void);
+
+  void setcDeepLight(unsigned int c);
+  void setcLightActive(unsigned int c);
+
+  unsigned int getcDeepLight(void);
+  unsigned int getcLightActive(void);
+
+  void setcDeepSleep(unsigned int c);
+  void setcLightSleep(unsigned int c);
+  void setcActiveNoData(unsigned int c);
+  void setcActiveRx(unsigned int c);
+  void setcActiveTx(unsigned int c);
+  void setcActiveRxTx(unsigned int c);
+
+  unsigned int getcDeepSleep(void);
+  unsigned int getcLightSleep(void);
+  unsigned int getcActiveNoData(void);
+  unsigned int getcActiveRx(void);
+  unsigned int getcActiveTx(void);
+
+  unsigned int getcActiveRxTx(void);
+
+  void setLastChange(double l);
+  void setStateDuration(unsigned int c);
+
+  double getLastChange(void);
+  unsigned int getStateDuration(void);
+
+  void setConsumo(void);
+
+  double getConsumo(void);
+
+  double getConsumption();
+  double getConnectedConsumption();
+  double getConsumptionInTx();
+  double getConsumptionInRx();
+  double getConsumptionInRxTx();
+  double getConsumptionInNoData();
+
+  virtual void measureConsumptionInTx(double t); // // measure the PUSCH energy consumption based on the tx power (taking account the PDCCH consumption)
+  virtual void measureConsumptionInRx(double t); // measure the PRACH energy consumption based on the tx power (taking account the PDCCH consumption)
+  virtual void measureConsumptionInTxRx(double t); // measure the PRACH energy consumption based on the tx power (taking account the PDCCH consumption)
+  //virtual void measureConsumptionInPrach(double t); // measure the PRACH energy consumption based on the tx power (taking account the PDCCH consumption)
+  virtual void measureConsumptionInRxOnlyPdcch(double t); // measure the RX power only in PDCCH
+  virtual void measureConsumptionInLightSleep(double t);
+  virtual void measureConsumptionInDeepSleep(double t);
+  virtual void measureConsumptionInTransaction(double t);
+
+  void updateEnergyConsumption(double t);
+
+  void SetDevice(UserEquipment *device);
+
+  void SetCurrentTxPower(double txPower);
+  double GetCurrentTxPower(void);
+  void SetCurrentRxPower(double rxPower);
+  double GetCurrentRxPower(void);
+
+  // Getter and Setter for the current transmission rate
+  void SetCurrentRxRate(double rxRate);
+  double GetCurrentRxRate(void);
+
+  // Getter and Setter for the current Number of used PRBs in Rx
+  void SetCurrentRxUsedPRBs(int nPRBs);
+  int GetCurrentRxUsedPRBs(void);
+
+  // Getter and Setter for the current MCS in Rx
+  void SetCurrentRxMCS(int mcs);
+  int GetCurrentRxMCS(void);
+
+  DRXManager::State state; //Current status
+
+protected:
+
+  void init();
+  //tempo em cada estados em TTIs
+  unsigned int tLightSleep, tDeepSleep, tActiveNoData, tActiveRx, tActiveTx, tActiveRxTx, tSleepToActive, tActiveToSleep;
+  unsigned int tDeepLight, tLightActive;
+
+  double cDeepLight, cLightActive;
+  double cDeepSleep, cLightSleep, cActiveNoData, cActiveRx, cActiveTx, cActiveRxTx;
+  double cSleepToActive, cActiveToSleep;
+  double cWakeupLight, cPowerdownLight, cWakeupDeep, cPowerdownDeep;
+
+  double lastChange, //tempo da ultima transmissao
+
+  stateDuration; //duracao esperada do estado atual
+
+  DRXManager::Action action; //Current action
+
+  double consumo;
+
+  double m_consumptionInRx;
+  double m_consumptionInTx;
+  double m_consumptionInRxTx;
+  double m_consumptionInNoData;
+
+  double m_totalConsumption;
+  double m_connectedConsumption;
+
+  bool transLightActive;
+
+  double m_currentTxPower; // in dBm
+  double m_currentRxPower; // in dBm
+
+  int m_currentRxRate; // in bps
+
+  int m_currentRxMCS;
+  int m_currentRxUsedPRBs;
+
+  //DRXManager* drxManager;	// pointer to the DRX manager in the mac_ue
+
+  UserEquipment *m_device;
+};
+
+#endif
