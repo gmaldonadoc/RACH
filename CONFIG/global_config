@@ -41,8 +41,8 @@ static bool _channel_AWGN_ = true;
 static bool UPLINK = false;
 static bool DOWNLINK = false;
 static bool RA_ENERGY_TRACE = false;
-static bool ONLY_RANDOM_ACCESS = true;
-static bool USE_PDCCH_MANAGER = false;
+static bool ONLY_RANDOM_ACCESS = false;
+static bool USE_PDCCH_MANAGER = true;
 static bool USE_RANDOM_ACCESS = false;
 static bool USE_POWER_CONTROL_SRS = false;
 
