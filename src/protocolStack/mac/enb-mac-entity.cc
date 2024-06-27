@@ -269,33 +269,27 @@ void EnbMacEntity::ReceiveRandomAccessPreambleMessage(RAPreambleIdealControlMess
 {
   m_preamble_transmissions++;
 
-  std::cerr << Simulator::Init()->Now()
-            << " ENodeB " << GetDevice()->GetIDNetworkNode()
-            << " received RA_Preamble " << RAPreamble->GetPreamble()
-            << " from UE " << ((UserEquipment *)RAPreamble->GetSourceDevice())->GetIDNetworkNode()
-            << std::endl;
-
-  m_preamblesReceived[RAPreamble->GetPreamble()]++;
-  std::cout << "Preambulo: " << RAPreamble->GetPreamble() << std::endl;
-  all_preambles.push_back(RAPreamble->GetPreamble());
   RAPreamble->setCollision(false);
   RAPreamble->m_processingTime = 4;
+  RAPreamble->setError(false);
 
   m_RAPreambleContainer->push_back(RAPreamble);
-}
 
+  // Programar el procesamiento de los mensajes de acceso aleatorio  
+  //Simulator::Init()->Schedule(0.001, &EnbMacEntity::ProcessRandomAccessPreambleMessages, this, RAPreamble->getRARNTI());
+}
 // *******************Nuevo método para procesar preámbulos de acceso aleatorio********************//
 void EnbMacEntity::ProcessRandomAccessPreambleMessages(int raSlot)
 {
-    std::string path = "./jsons/";
+    std::string path = "./jsons/";                                                                                                          
     std::string nameOfJSonFile = path + "file_" + std::to_string(raSlot) + ".json";
-    std::vector<RAPreambleIdealControlMessage *> m_ProcessedRAPreambleContainer;
-    std::vector<RAPreambleIdealControlMessage *> m_RAPreambleContainerTmp;
+    std::vector<RAPreambleIdealControlMessage *> *m_ProcessedRAPreambleContainer = new std::vector<RAPreambleIdealControlMessage *>();
+    std::vector<RAPreambleIdealControlMessage *> *m_RAPreambleContainerTmp = new std::vector<RAPreambleIdealControlMessage *>();
 
     RAPreambleIdealControlMessage *RAPreamble;
 
-    if (!m_RAPreambleContainer->empty())
-    {
+    if (!m_RAPreambleContainer->empty())                                                                                        
+    {                                                                                                       
         // Procesar los preámbulos con RARNTI igual a raSlot
         for (auto iter = m_RAPreambleContainer->begin(); iter != m_RAPreambleContainer->end(); iter++)
         {
@@ -303,15 +297,15 @@ void EnbMacEntity::ProcessRandomAccessPreambleMessages(int raSlot)
             if (RAPreamble->getRARNTI() == raSlot)
             {
                 // Agregar el preámbulo procesado al contenedor m_ProcessedRAPreambleContainer
-                m_ProcessedRAPreambleContainer.push_back(RAPreamble);
+                m_ProcessedRAPreambleContainer->push_back(RAPreamble);
             }
             else
             {
-                m_RAPreambleContainerTmp.push_back(RAPreamble);
+                m_RAPreambleContainerTmp->push_back(RAPreamble);
             }
         }
 
-        if (!m_ProcessedRAPreambleContainer.empty())
+        if (!m_ProcessedRAPreambleContainer->empty())
         {
             std::ofstream myJSonFile(nameOfJSonFile);
 
@@ -319,9 +313,9 @@ void EnbMacEntity::ProcessRandomAccessPreambleMessages(int raSlot)
             {
                 myJSonFile << "{\n  \"Preambles\": [\n";
                 // Procesar los preámbulos con RARNTI igual a raSlot
-                for (size_t i = 0; i < m_ProcessedRAPreambleContainer.size(); ++i)
+                for (size_t i = 0; i < m_ProcessedRAPreambleContainer->size(); ++i)
                 {
-                    RAPreamble = m_ProcessedRAPreambleContainer[i];
+                    RAPreamble = (*m_ProcessedRAPreambleContainer)[i];
 
                     myJSonFile << "    {\n";
                     myJSonFile << "      \"Preamble\": " + std::to_string(RAPreamble->GetPreamble()) + ",\n";
@@ -330,7 +324,7 @@ void EnbMacEntity::ProcessRandomAccessPreambleMessages(int raSlot)
                     myJSonFile << "      \"PosX\": " + std::to_string(static_cast<UserEquipment *>(RAPreamble->GetSourceDevice())->GetMobilityModel()->GetAbsolutePosition()->GetCoordinateX()) + ",\n";
                     myJSonFile << "      \"PosY\": " + std::to_string(static_cast<UserEquipment *>(RAPreamble->GetSourceDevice())->GetMobilityModel()->GetAbsolutePosition()->GetCoordinateY()) + ",\n";
                     myJSonFile << "      \"Distance\": " + std::to_string(static_cast<UserEquipment *>(RAPreamble->GetSourceDevice())->GetMobilityModel()->GetAbsolutePosition()->GetDistance(static_cast<UserEquipment *>(RAPreamble->GetSourceDevice())->GetTargetNode()->GetMobilityModel()->GetAbsolutePosition())) + "\n";
-                    myJSonFile << "    }" + std::string((i < m_ProcessedRAPreambleContainer.size() - 1) ? "," : "") + "\n";
+                    myJSonFile << "    }" + std::string((i < m_ProcessedRAPreambleContainer->size() - 1) ? "," : "") + "\n";
                 }
                 myJSonFile << "  ]\n}\n";
 
@@ -344,122 +338,123 @@ void EnbMacEntity::ProcessRandomAccessPreambleMessages(int raSlot)
             }
         }
 
+        
         // Reemplazar el contenedor original con el temporal
-        m_RAPreambleContainer->clear();
-        *m_RAPreambleContainer = std::move(m_RAPreambleContainerTmp);
-
+        m_RAPreambleContainer->clear();                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+        delete m_RAPreambleContainer;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+        m_RAPreambleContainer = m_RAPreambleContainerTmp;
+                                                                                                                                                                                                                                    
         // Llamar a MATLAB para procesar el archivo JSON
-        std::string command = "/dados/giancarlo/bin/matlab -batch \"addpath('/dados/giancarlo/RACH'); process_json('" + nameOfJSonFile + "')\" &";
+        std::string command = "export TMPDIR=/dados/giancarlo/tmp && export MATLAB_PREFDIR=/dados/giancarlo/tmp && /dados/giancarlo/bin/matlab -batch \"addpath('/dados/giancarlo/RACH'); process_json('" + nameOfJSonFile + "')\" &";
+ 
         std::cout << "Ejecutando comando MATLAB: " << command << std::endl;
         system(command.c_str());
-        //Simulator::Init()->Schedule(0.002, &EnbMacEntity::PrepareRandomAccessResponseMessage, this, raSlot, RAPreamble);
-        Simulator::Init()->Schedule(0.002, &EnbMacEntity::PrepareRandomAccessResponseMessage, this, raSlot, new std::vector<RAPreambleIdealControlMessage *>());
-
+        
+        Simulator::Init()->Schedule(0.002, &EnbMacEntity::PrepareRandomAccessResponseMessage, this, raSlot, m_ProcessedRAPreambleContainer);
     }
-}
 
+}
 
 // *******************Nuevo método para preparar el mensaje de RA********************//
 void EnbMacEntity::PrepareRandomAccessResponseMessage(int raSlot, std::vector<RAPreambleIdealControlMessage *> *processedRAPreambleContainer)
 {
+    int m_ReceivedRandomAccessPreambles[64][2];
+
+    for (int i = 0; i < 64; i++)
+    {
+        m_ReceivedRandomAccessPreambles[i][0] = 0; // False
+        m_ReceivedRandomAccessPreambles[i][1] = 0; // No collision
+    }
+
     std::string path = "./jsons/";
     std::string nameOfJSonFile = path + "file_" + std::to_string(raSlot) + "_processed.json";
     RAPreambleIdealControlMessage *RAPreamble;
 
     // Esperar los datos de MATLAB
     std::cout << "Esperando a que MATLAB procese y cree el archivo JSON: " << nameOfJSonFile << std::endl;
-    while (!std::ifstream(nameOfJSonFile)) {
-        usleep(2000); // Esperar 2 milisegundos antes de verificar nuevamente
+    int attempts = 0;
+    const int max_attempts = 900;
+    while (!std::ifstream(nameOfJSonFile) && attempts < max_attempts) {
+        usleep(90000); // Esperar 100 milisegundos antes de verificar nuevamente
+        attempts++;
+    }
+
+    if (attempts == max_attempts) {
+        std::cerr << "Error: Se alcanzó el número máximo de intentos al esperar el archivo JSON: " << nameOfJSonFile << std::endl;
+        return;
     }
 
     // Leer el archivo JSON procesado por MATLAB
     std::ifstream inFile(nameOfJSonFile);
-    if (inFile.is_open()) {
+    if (inFile.is_open())
+    {
         json j;
         inFile >> j;
         inFile.close();
-        
+
         std::cout << "Archivo JSON leído correctamente: " << nameOfJSonFile << std::endl;
 
         // Procesar cada entrada en el JSON
-        for (const auto& entry : j) {
+        for (const auto &entry : j)
+        {
             int preamble = entry["preamble"];
-            std::vector<double> bin = entry["bin"];
+            int colision = entry["clase"]; // 0 o 1
 
             // Imprimir los datos leídos
             std::cout << "Preamble: " << preamble << std::endl;
-            std::cout << "Bin values: ";
-            for (double value : bin) {
-                std::cout << value << " ";
-            }
-            std::cout << std::endl;
+            std::cout << "Colision: " << colision << std::endl;
 
-            // Crear un nuevo mensaje RAPreambleIdealControlMessage y actualizar sus valores
-            //RAPreambleIdealControlMessage *newPreamble = new RAPreambleIdealControlMessage();
-            //newPreamble->SetPreamble(preamble);
-      
-
-            // Agregar el nuevo preámbulo procesado al contenedor
-            //processedRAPreambleContainer->push_back(newPreamble);
+            m_ReceivedRandomAccessPreambles[preamble][0] = 1; // True
+            m_ReceivedRandomAccessPreambles[preamble][1] = colision;
         }
-    } else {
+
+        for (auto iter = processedRAPreambleContainer->begin(); iter != processedRAPreambleContainer->end(); iter++)
+        {
+            RAPreamble = *iter;
+            if ((RAPreamble->getRARNTI() == raSlot) && (m_ReceivedRandomAccessPreambles[RAPreamble->GetPreamble()][0] == 1))
+            {
+                RAPreamble->setCollision(m_ReceivedRandomAccessPreambles[RAPreamble->GetPreamble()][1] == 1);
+
+                std::cerr << Simulator::Init()->Now()
+                          << " ENodeB " << GetDevice()->GetIDNetworkNode()
+                          << " received RA_Preamble " << RAPreamble->GetPreamble()
+                          << " from UE " << ((UserEquipment *)RAPreamble->GetSourceDevice())->GetIDNetworkNode()
+                          << std::endl;
+
+                RAPreamble->setIsQueue(true);
+
+                if (RAPreamble->getCollision() == false)
+                {
+                    MsgToSchedule *msg = new MsgToSchedule();
+                    msg->m_RARNTI = RAPreamble->getRARNTI();
+                    msg->m_preamble = RAPreamble->GetPreamble();
+                    msg->m_timeArrived = Simulator::Init()->Now();
+                    msg->m_destination = RAPreamble->GetSourceDevice();
+                    msg->m_scheduled = false;
+
+                    m_msgs2ToSchedule->push_back(msg);
+                }
+            }
+            else
+            {
+                RAPreamble->setError(true);
+            }
+        }
+        // Programar la siguiente iteración del procesamiento
+        //Simulator::Init()->Schedule(0.002, &EnbMacEntity::ProcessRandomAccessPreambleMessages, this, raSlot);
+    }
+    else
+    {
         std::cerr << "No se pudo abrir el archivo JSON: " << nameOfJSonFile << std::endl;
+        
     }
 
-  for (auto iter = processedRAPreambleContainer->begin(); iter != processedRAPreambleContainer->end(); iter++)
-  {
-    RAPreamble = *iter;
-    std::cerr << Simulator::Init()->Now()
-              << " [DEBUG-RA] @ENodeB: Preamble_Collision " << RAPreamble->getCollision()
-              << " from UE " << RAPreamble->GetSourceDevice()->GetIDNetworkNode()
-              << " #Preambles_received " << m_RAPreambleContainer->size()
-              << std::endl;
-
-    RAPreamble->setIsQueue(true);
-
-    UserEquipment *tmp_ue = ((UserEquipment *)RAPreamble->GetSourceDevice());
-    UeMacEntity *tmp_ue_mac = (UeMacEntity *)tmp_ue->GetProtocolStack()->GetMacEntity();
-
-    tmp_ue_mac->m_temp_enb_users_trying_RA = m_RAPreambleContainer->size();
-    tmp_ue_mac->m_temp_enb_preambles_collided = 0;
-    tmp_ue_mac->m_temp_enb_preambles_distinct = 0;
-
-    std::vector<RAPreambleIdealControlMessage *>::iterator it;
-    std::vector<RAPreambleIdealControlMessage *>::iterator jt;
-    int ct = 0;
-    for (it = m_RAPreambleContainer->begin(); it != m_RAPreambleContainer->end(); it++)
-    {
-      if (RAPreamble->getRARNTI() == (*it)->getRARNTI())
-      {
-        ct++;
-      }
-    }
-
-    ct = (ct > 15 ? 15 : ct);
-    tmp_ue_mac->setCounterMatchedRA_RNTI(ct);
-
-    std::cerr << Simulator::Init()->Now()
-              << " [DEBUG-RA-CT] UE " << tmp_ue->GetIDNetworkNode()
-              << " : got RARNTI counter of " << ct
-              << std::endl;
-
-    if (RAPreamble->getCollision() == false)
-    {
-      MsgToSchedule *msg = new MsgToSchedule();
-      msg->m_RARNTI = RAPreamble->getRARNTI();
-      msg->m_preamble = RAPreamble->GetPreamble();
-      msg->m_timeArrived = Simulator::Init()->Now();
-      msg->m_destination = RAPreamble->GetSourceDevice();
-      msg->m_scheduled = false;
-
-      m_msgs2ToSchedule->push_back(msg);
-    }
-  }
-
-  // Limpiar el contenedor de preámbulos procesados
-  processedRAPreambleContainer->clear();
-  delete processedRAPreambleContainer;
+    // Limpiar el contenedor de preámbulos procesados
+    processedRAPreambleContainer->clear();
+    delete processedRAPreambleContainer;
 }
+
 //***************************************************************
 
 void EnbMacEntity::ReceiveRandomAccessPreambleIdealControlMessage(RAPreambleIdealControlMessage *RAPreamble)
