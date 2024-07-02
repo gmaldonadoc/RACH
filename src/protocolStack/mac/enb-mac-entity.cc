@@ -346,9 +346,10 @@ void EnbMacEntity::ProcessRandomAccessPreambleMessages(int raSlot)
         m_RAPreambleContainer = m_RAPreambleContainerTmp;
                                                                                                                                                                                                                                     
         // Llamar a MATLAB para procesar el archivo JSON
-        std::string command = "export TMPDIR=/dados/giancarlo/tmp && export MATLAB_PREFDIR=/dados/giancarlo/tmp && /dados/giancarlo/bin/matlab -batch \"addpath('/dados/giancarlo/RACH'); process_json('" + nameOfJSonFile + "')\" &";
- 
-        std::cout << "Ejecutando comando MATLAB: " << command << std::endl;
+        //std::string command = "export TMPDIR=/dados/giancarlo/tmp && export MATLAB_PREFDIR=/dados/giancarlo/tmp && /dados/giancarlo/bin/matlab -batch \"addpath('/dados/giancarlo/RACH'); process_json('" + nameOfJSonFile + "')\" &";
+        std::string command = "export TMPDIR=/dados/giancarlo/tmp && export MATLAB_PREFDIR=/dados/giancarlo/tmp && /dados/giancarlo/bin/matlab -batch \"java.lang.System.setProperty('java.io.tmpdir', '/dados/giancarlo/tmp'); addpath('/dados/giancarlo/RACH'); process_json('" + nameOfJSonFile + "')\" &";
+        
+        std::cout << Simulator::Init()->Now() << " Ejecutando comando MATLAB: " << command << std::endl;
         system(command.c_str());
         
         Simulator::Init()->Schedule(0.002, &EnbMacEntity::PrepareRandomAccessResponseMessage, this, raSlot, m_ProcessedRAPreambleContainer);
@@ -384,6 +385,8 @@ void EnbMacEntity::PrepareRandomAccessResponseMessage(int raSlot, std::vector<RA
         std::cerr << "Error: Se alcanzó el número máximo de intentos al esperar el archivo JSON: " << nameOfJSonFile << std::endl;
         return;
     }
+
+    std::cout << Simulator::Init()->Now() << " Archivo JSON procesado por MATLAB detectado: " << nameOfJSonFile << std::endl;
 
     // Leer el archivo JSON procesado por MATLAB
     std::ifstream inFile(nameOfJSonFile);
