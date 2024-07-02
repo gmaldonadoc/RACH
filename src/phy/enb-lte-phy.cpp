@@ -347,21 +347,21 @@ EnbLtePhy::ReceiveIdealControlMessage(IdealControlMessage *msg, NetworkNode *src
 
     RAPreambleIdealControlMessage *RAPreamble = (RAPreambleIdealControlMessage *) msg;
 
-    if (powerPRACHRx_dBm >= ((ENodeB*) GetDevice())->GetPreambleInitialReceivedTargetPower()) {
-      RAPreamble->setError(false);
-    } else {
-      std::cout << Simulator::Init()->Now()
-                << " PRACH RX UE " << src->GetIDNetworkNode() << " ERROR "
-                << " PRx " <<  powerPRACHRx_dBm
-                << " Target " << ((ENodeB*) GetDevice())->GetPreambleInitialReceivedTargetPower() << std::endl;
-      RAPreamble->setError(true);
-    }
+    //if (powerPRACHRx_dBm >= ((ENodeB*) GetDevice())->GetPreambleInitialReceivedTargetPower()) {
+    //  RAPreamble->setError(false);
+    //} else {
+    //  std::cout << Simulator::Init()->Now()
+    //            << " PRACH RX UE " << src->GetIDNetworkNode() << " ERROR "
+    //            << " PRx " <<  powerPRACHRx_dBm
+    //            << " Target " << ((ENodeB*) GetDevice())->GetPreambleInitialReceivedTargetPower() << std::endl;
+    //  RAPreamble->setError(true);
+    //}
 
-    if (Random::Init()->Uniform(0.0, 1.0) <= (1 - (1 / (pow(M_E, RAPreamble->getAttempts()))))) {
+    //if (Random::Init()->Uniform(0.0, 1.0) <= (1 - (1 / (pow(M_E, RAPreamble->getAttempts()))))) {
       //RAPreamble->setError(false);
-    } else {
+    //} else {
       //RAPreamble->setError(true);
-    }
+    //}
 
     EnbMacEntity *mac = (EnbMacEntity*) GetDevice()->GetProtocolStack()->GetMacEntity();
     Simulator::Init()->Schedule(0.001, &EnbMacEntity::ReceiveRandomAccessPreambleMessage, mac, RAPreamble);
