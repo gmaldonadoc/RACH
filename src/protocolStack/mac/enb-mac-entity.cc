@@ -427,17 +427,19 @@ void EnbMacEntity::PrepareRandomAccessResponseMessage(int raSlot, std::vector<RA
 
                 RAPreamble->setIsQueue(true);
 
-                if (RAPreamble->getCollision() == false)
-                {
-                    MsgToSchedule *msg = new MsgToSchedule();
-                    msg->m_RARNTI = RAPreamble->getRARNTI();
-                    msg->m_preamble = RAPreamble->GetPreamble();
-                    msg->m_timeArrived = Simulator::Init()->Now();
-                    msg->m_destination = RAPreamble->GetSourceDevice();
-                    msg->m_scheduled = false;
+                //if (RAPreamble->getCollision() == false)
+                //{
+                MsgToSchedule *msg = new MsgToSchedule();
+                msg->m_RARNTI = RAPreamble->getRARNTI();
+                msg->m_preamble = RAPreamble->GetPreamble();
+                msg->m_timeArrived = Simulator::Init()->Now();
+                msg->m_destination = RAPreamble->GetSourceDevice();
+                msg->m_scheduled = false;
+                msg->m_priority = msg->m_collision ? LOW_PRIORITY : HIGH_PRIORITY;
+                //msg->m_collision = RAPreamble->getCollision();
 
-                    m_msgs2ToSchedule->push_back(msg);
-                }
+                m_msgs2ToSchedule->push_back(msg);
+                //}
             }
             else
             {
