@@ -20,7 +20,7 @@
  */
 
 #include <algorithm>
-
+#define PDCCH_DEBUG
 #include "pdcch-scheduler.h"
 
 #include "../../../phy/lte-phy.h"
@@ -140,9 +140,14 @@ PdcchScheduler::DoSchedule(void) {
     } else if (m_modeType == 6) {
       // Enhanced Preamble Priority-Aware Control Resource Allocation (ePPA) Algorithm
       PPA_Scheduling();
+      
+    } else if (m_modeType == 7) {
+      // Llamada al nuevo método collision_detect
+      collision_detect();
     }
   }
 }
+
 
 void
 PdcchScheduler::StopSchedule() {
@@ -151,7 +156,7 @@ PdcchScheduler::StopSchedule() {
 
 void
 PdcchScheduler::DoStopSchedule() {
-  std::cerr << "DoStopSchedule() llamada" << std::endl;
+  //std::cerr << "DoStopSchedule() llamada" << std::endl;
   //std::cerr << Simulator::Init()->Now() << " PDCCH TTI " << FrameManager::Init()->GetTTICounter() << " Max-CCEs " << m_mac->GetDevice()->GetPhy()->GetBandwidthManager()->GetPDCCHTotalCces() << " Used-CCEs " << m_mac->GetDevice()->GetPhy()->GetBandwidthManager()->GetPDCCHTotalCces() - m_current_pdcch_cces << " Available-CCEs " << m_current_pdcch_cces << " Used-To-Msg2 " << m_nMsg2ReservedCces << " Used-To-Msg4 " << m_nMsg4ReservedCces << " Used-To-UL " << m_nUlReservedCces << " Used-To-DL " << m_nDlReservedCces << " Used-To-Bsr " << m_nBsrGrantsReservedCces << std::endl;
 
 #ifdef PDCCH_DEBUG
@@ -1808,6 +1813,9 @@ PdcchScheduler::PPA_Scheduling() {
   /* Select the RAR message */
   Msg2PriorityScheduling();
 
+  /* Detect and prioritize based on collisions */
+  //collision_detect();
+  
   /* Select the Contention-resolution message */
   Msg4NormalPriorityScheduling();
 
@@ -1867,6 +1875,360 @@ PdcchScheduler::PPA_Scheduling() {
   }
 }
 
+// void PdcchScheduler::collision_detect() {
+//   int pdcchFormat;
+
+//   uDl = 0;
+
+//   /* Detect and prioritize based on collisions */
+//   collision_priority();
+
+//   /* Select the RAR message */
+//   //Msg2PriorityScheduling();
+
+//   /* Select the Contention-resolution message */
+//   Msg4NormalPriorityScheduling();
+
+//   /* Select the BSR grants (from SR) */
+//   BsrGrantNormalPriorityScheduling();
+
+//   //if (m_uplinkScheduler != NULL) {
+//     //UplinkPacketScheduler::UsersToSchedule *usersToSchedule = m_uplinkScheduler->GetUsersToSchedule();
+//   if (((UplinkPacketScheduler*) ((EnbMacEntity*) m_mac)->GetUplinkPacketScheduler()) != NULL) {
+//     UplinkPacketScheduler::UsersToSchedule *usersToSchedule = ((UplinkPacketScheduler*) ((EnbMacEntity*) m_mac)->GetUplinkPacketScheduler())->GetUsersToSchedule();
+    
+//     for (int u = 0; u < usersToSchedule->size(); u++) {
+//       if (false) {
+//         if (InformationManager::Init()->m_pdcch_format == -1) {
+//           pdcchFormat = LinkAdaptation(UEsToDL->at(uDl));
+//         } else {
+//           pdcchFormat = InformationManager::Init()->m_pdcch_format;
+//         }
+
+//         if (m_current_pdcch_cces >= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat)) {
+//           // escalona DL
+//           if (PDCCHResourcesAllocation(UEsToDL->at(uDl++))) {
+//             m_current_pdcch_cces -= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+
+//             m_nDlReservedCces += InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+//             m_nDlUEsToSchedule++;
+//           } else {
+// #ifdef PDCCH_DEBUG
+//             std::cout << "DL false" << std::endl;
+// #endif
+//           }
+//         }
+//       }
+
+//       if (InformationManager::Init()->m_pdcch_format == -1) {
+//         pdcchFormat = LinkAdaptation(usersToSchedule->at(u)->m_userToSchedule->GetIDNetworkNode());
+//       } else {
+//         pdcchFormat = InformationManager::Init()->m_pdcch_format;
+//       }
+
+//       if (m_current_pdcch_cces >= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat)) {
+//         // escalona UL
+//         if (PDCCHResourcesAllocation(usersToSchedule->at(u)->m_userToSchedule->GetIDNetworkNode())) {
+//           usersToSchedule->at(u)->m_allowToSchedule = true;
+//           m_current_pdcch_cces -= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+
+//           m_nUlReservedCces += InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+//           m_nUlUEsToSchedule++;
+//         } else {
+// #ifdef PDCCH_DEBUG
+//           std::cout << "UL false" << std::endl;
+// #endif
+//         }
+//       }
+//     }
+//   }
+// }
+
+// void PdcchScheduler::collision_priority() {
+//     bool canSch;
+//     int qtd = 0, pdcchFormat, i, j;
+
+//     pdcchFormat = 3;
+
+//     m_HighPriorityMSGs2ToSchedule = new MSGs2ToSchedule;
+//     m_LowPriorityMSGs2ToSchedule = new MSGs2ToSchedule;
+
+//     for (i = 0; i < ((EnbMacEntity*) m_mac)->getMSGs2ToSchedule()->size(); i++) {
+//         if (!((EnbMacEntity*) m_mac)->getMSGs2ToSchedule()->at(i)->m_scheduled) {
+//             if (Simulator::Init()->Now() - ((EnbMacEntity*) m_mac)->getMSGs2ToSchedule()->at(i)->m_timeArrived < InformationManager::Init()->ra_ResponseWindowSize) {
+//                 MSG2ToSchedule *msg2 = new MSG2ToSchedule();
+//                 msg2->m_vectorPosition = i;
+
+//                 if (((EnbMacEntity*) m_mac)->getMSGs2ToSchedule()->at(i)->m_collision == false) {
+//                     std::cout << "PDCCH - High Priority Selected for Preamble: " << ((EnbMacEntity*) m_mac)->getMSGs2ToSchedule()->at(i)->m_preamble << std::endl;
+//                     GetHighPriorityMSGs2ToSchedule()->push_back(msg2);
+//                 } else {
+//                     std::cout << "PDCCH - Low Priority Selected for Preamble: " << ((EnbMacEntity*) m_mac)->getMSGs2ToSchedule()->at(i)->m_preamble << std::endl;
+//                     msg2->m_metric = 0;
+//                     GetLowPriorityMSGs2ToSchedule()->push_back(msg2);
+//                 }
+//             }
+//         }
+//     }
+// }
+
+void PdcchScheduler::collision_priority() {
+#ifdef PDCCH_DEBUG
+  std::cerr << Simulator::Init()->Now() << " PDCCH - Scheduling Msg2" << std::endl;
+#endif
+
+  int qtd = 0, pdcchFormat;
+  bool canSch;
+
+  pdcchFormat = 3;
+
+  if (m_current_pdcch_cces >= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat)) {
+
+    std::vector<EnbMacEntity::MSGsToSchedule::iterator> highPriority, lowPriority;
+    EnbMacEntity::MSGsToSchedule::iterator iter;
+
+    // Clasificar los mensajes en alta y baja prioridad
+    for (iter = ((EnbMacEntity*) m_mac)->getMSGs2ToSchedule()->begin(); iter != ((EnbMacEntity*) m_mac)->getMSGs2ToSchedule()->end(); iter++) {
+      if ((*iter) != NULL && !(*iter)->m_scheduled) {
+        if ((*iter)->m_priority == HIGH_PRIORITY) {
+          highPriority.push_back(iter);
+#ifdef PDCCH_DEBUG
+          std::cerr << Simulator::Init()->Now() << " PDCCH - High priority message found: " << (*iter)->m_RARNTI << std::endl;
+#endif
+        } else {
+          lowPriority.push_back(iter);
+#ifdef PDCCH_DEBUG
+          std::cerr << Simulator::Init()->Now() << " PDCCH - Low priority message found: " << (*iter)->m_RARNTI << std::endl;
+#endif
+        }
+      }
+    }
+
+    // Barajar las listas de prioridades
+    std::random_shuffle(highPriority.begin(), highPriority.end());
+    std::random_shuffle(lowPriority.begin(), lowPriority.end());
+
+    RAResponseIdealControlMessage *RandomAccessResponse = NULL;
+
+    // Función para intentar programar mensajes de una lista de prioridad
+    auto schedule_messages = [&](std::vector<EnbMacEntity::MSGsToSchedule::iterator>& priorityList) {
+      for (auto it = priorityList.begin(); it != priorityList.end(); ++it) {
+        iter = *it;
+        if ((*iter) != NULL && !(*iter)->m_scheduled) {
+          canSch = true;
+          DRXManager *drxMan = ((UserEquipment *) (*iter)->m_destination)->GetDRXManager();
+          if (drxMan != NULL) {
+            DRXManager::State drxState = drxMan->getStatus();
+            if (drxState == DRXManager::LIGHT || drxState == DRXManager::DEEP || drxState == DRXManager::WAKEUP_LIGHT || drxState == DRXManager::POWERDOWN_LIGHT) {
+              if (drxMan->GetExpectedOffTime() > 1)
+                canSch = false;
+            } else if (drxState == DRXManager::DEEP) {
+              canSch = false;
+            }
+          }
+
+          if (canSch) {
+            if (Simulator::Init()->Now() - (*iter)->m_timeArrived < InformationManager::Init()->ra_ResponseWindowSize) {
+
+              if (PDCCHResourcesAllocation(-1) == false) {
+                std::cout << "MSG2 false" << std::endl;
+                return;
+              }
+
+              RandomAccessResponse = new RAResponseIdealControlMessage((*iter)->m_RARNTI, InformationManager::Init()->backoffIndicatorGeneral, InformationManager::Init()->backoffIndicatorHTC, InformationManager::Init()->backoffIndicatorMTC);
+              RandomAccessResponse->SetSourceDevice(m_mac->GetDevice());
+
+              m_current_pdcch_cces -= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+
+              m_nMsg2ReservedCces += InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+              m_nMsg2ToSchedule++;
+
+              Simulator::Init()->Schedule(0.000, &EnbMacEntity::SendRandomAccessResponseIdealControlMessage, ((EnbMacEntity*) m_mac), RandomAccessResponse);
+
+#ifdef PDCCH_DEBUG
+              std::cerr << Simulator::Init()->Now() << " PDCCH - Scheduled message with RARNTI: " << (*iter)->m_RARNTI << std::endl;
+#endif
+              break;
+            }
+          }
+        }
+      }
+    };
+
+    // Intentar programar primero los de alta prioridad
+    schedule_messages(highPriority);
+
+    // Si aún hay recursos, intentar programar los de baja prioridad
+    if (RandomAccessResponse == NULL) {
+      schedule_messages(lowPriority);
+    }
+
+    if (RandomAccessResponse != NULL) {
+      for (iter = ((EnbMacEntity*) m_mac)->getMSGs2ToSchedule()->begin(); iter != ((EnbMacEntity*) m_mac)->getMSGs2ToSchedule()->end(); iter++) {
+        if ((*iter) != NULL) {
+          if ((!(*iter)->m_scheduled) && ((*iter)->m_RARNTI == RandomAccessResponse->getRARNTI()) && (qtd < m_maxGrantsPerRAR)) {
+            if (Simulator::Init()->Now() - (*iter)->m_timeArrived < InformationManager::Init()->ra_ResponseWindowSize) {
+              canSch = true;
+              DRXManager *drxMan = ((UserEquipment *) (*iter)->m_destination)->GetDRXManager();
+              if (drxMan != NULL) {
+                DRXManager::State drxState = drxMan->getStatus();
+                if (drxState == DRXManager::LIGHT || drxState == DRXManager::DEEP || drxState == DRXManager::WAKEUP_LIGHT || drxState == DRXManager::POWERDOWN_LIGHT) {
+                  if (drxMan->GetExpectedOffTime() > 1)
+                    canSch = false;
+                } else if (drxState == DRXManager::DEEP) {
+                  canSch = false;
+                }
+              }
+              if (canSch) {
+                (*iter)->m_scheduled = true;
+                RandomAccessResponse->AddNewRecord((*iter)->m_preamble);
+                ((EnbMacEntity*) m_mac)->AllocationResourceToDataTransmission(1);
+                qtd++;
+#ifdef PDCCH_DEBUG
+                std::cerr << Simulator::Init()->Now() << " PDCCH - Adding to RandomAccessResponse: " << (*iter)->m_RARNTI << std::endl;
+#endif
+              }
+            } else {
+              (*iter)->m_scheduled = true;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+void
+PdcchScheduler::collision_detect() {
+  int pdcchFormat, current_pdcchCCEs_downlink = 0, current_pdcchCCEs_uplink = 0, current_pdcchCCEs_last = 0;
+
+  uDl = 0;
+
+  /* Select the RAR message */
+  collision_priority();
+
+  /* Select the Contention-resolution message */
+  Msg4NormalPriorityScheduling();
+
+  /* Select the BSR grants (from SR) */
+  BsrGrantNormalPriorityScheduling();
+
+  while (m_current_pdcch_cces > 0) {
+
+    current_pdcchCCEs_last = m_current_pdcch_cces;
+
+    if (UPLINK == true && DOWNLINK == true) {
+      current_pdcchCCEs_downlink = ceil(m_current_pdcch_cces / 2);
+      current_pdcchCCEs_uplink = floor(m_current_pdcch_cces / 2);
+    }
+
+    if (UPLINK == true && DOWNLINK == false) {
+      current_pdcchCCEs_uplink = m_current_pdcch_cces;
+    }
+
+    if (UPLINK == false && DOWNLINK == true) {
+      current_pdcchCCEs_downlink = m_current_pdcch_cces;
+    }
+
+    /* Select the downlink flows */
+    if (((DownlinkPacketScheduler*) ((EnbMacEntity*) m_mac)->GetDownlinkPacketScheduler())->GetDownlinkTDScheduler() != NULL) {
+      DownlinkPacketScheduler::FlowsToSchedule *flowsToSchedule = ((DownlinkPacketScheduler*) ((EnbMacEntity*) m_mac)->GetDownlinkPacketScheduler())->GetFlowsToSchedule();
+
+      for (int f = 0; f < flowsToSchedule->size(); f++) {
+
+        if (flowsToSchedule->at(f)->m_allowToSchedule == true) {
+          continue;
+        }
+
+        if (InformationManager::Init()->m_pdcch_format == -1) {
+          pdcchFormat = LinkAdaptation(flowsToSchedule->at(f)->m_bearer->GetDestination()->GetIDNetworkNode());
+        } else {
+          pdcchFormat = InformationManager::Init()->m_pdcch_format;
+        }
+
+        if (current_pdcchCCEs_downlink >= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat)) {
+          // escalona DL
+          if (PDCCHResourcesAllocation(flowsToSchedule->at(f)->m_bearer->GetDestination()->GetIDNetworkNode())) {
+            flowsToSchedule->at(f)->m_allowToSchedule = true;
+
+            current_pdcchCCEs_downlink -= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+            m_current_pdcch_cces -= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+
+            m_nDlReservedCces += InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+            m_nDlUEsToSchedule++;
+          } else {
+#ifdef PDCCH_DEBUG
+            std::cout << "DL false" << std::endl;
+#endif
+          }
+        }
+      }
+    }
+
+    /* Select the uplink users */
+    if (((UplinkPacketScheduler*) ((EnbMacEntity*) m_mac)->GetUplinkPacketScheduler())->GetUplinkTDScheduler() != NULL) {
+      UplinkPacketScheduler::UsersToSchedule *usersToSchedule = ((UplinkPacketScheduler*) ((EnbMacEntity*) m_mac)->GetUplinkPacketScheduler())->GetUsersToSchedule();
+
+      for (int u = 0; u < usersToSchedule->size(); u++) {
+
+        /*if (DOWNLINK == false) {
+          if (InformationManager::Init()->m_pdcch_format == -1) {
+            pdcchFormat = LinkAdaptation(UEsToDL->at(uDl));
+          } else {
+            pdcchFormat = InformationManager::Init()->m_pdcch_format;
+          }
+
+          if (current_pdcchCCEs_uplink >= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat)) {
+             escalona DL
+            if (PDCCHResourcesAllocation(UEsToDL->at(uDl++))) {
+              current_pdcchCCEs_uplink -= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+              m_current_pdcch_cces -= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+
+              m_nDlReservedCces += InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+              m_nDlUEsToSchedule++;
+            } else {
+#ifdef PDCCH_DEBUG
+              std::cout << "DL false" << std::endl;
+#endif
+            }
+          }
+        }*/
+
+        if (usersToSchedule->at(u)->m_allowToSchedule == true) {
+          continue;
+        }
+
+        if (InformationManager::Init()->m_pdcch_format == -1) {
+          pdcchFormat = LinkAdaptation(usersToSchedule->at(u)->m_userToSchedule->GetIDNetworkNode());
+        } else {
+          pdcchFormat = InformationManager::Init()->m_pdcch_format;
+        }
+
+        if (current_pdcchCCEs_uplink >= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat)) {
+          // escalona UL
+          if (PDCCHResourcesAllocation(usersToSchedule->at(u)->m_userToSchedule->GetIDNetworkNode())) {
+            usersToSchedule->at(u)->m_allowToSchedule = true;
+            current_pdcchCCEs_uplink -= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+            m_current_pdcch_cces -= InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+
+            m_nUlReservedCces += InformationManager::Init()->GetPDCCHNumberOfCCEs(pdcchFormat);
+            m_nUlUEsToSchedule++;
+          } else {
+#ifdef PDCCH_DEBUG
+            std::cout << "UL false" << std::endl;
+#endif
+          }
+        }
+      }
+    }
+
+    if (m_current_pdcch_cces == current_pdcchCCEs_last) {
+      break;
+    }
+  }
+}
+    
 void
 PdcchScheduler::Msg2PriorityScheduling() {
   bool canSch;
