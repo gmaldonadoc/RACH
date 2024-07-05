@@ -1,7 +1,4 @@
-/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
-/*
- * Copyright (c) 2015
- *
+*
  * This file is part of LTE-Sim
  *
  * LTE-Sim is free software; you can redistribute it and/or modify
@@ -25,6 +22,9 @@
 #include "../enb-mac-entity.h"
 #include "../packet-scheduler/uplink-packet-scheduler.h"
 #include "../packet-scheduler/downlink-packet-scheduler.h"
+
+const int HIGH_PRIORITY = 1;
+const int LOW_PRIORITY = 0;
 
 class MacEntity;
 class UplinkPacketScheduler;
@@ -63,6 +63,8 @@ public:
   void DoSchedule(void);
   void StopSchedule();
   void DoStopSchedule();
+  
+   // Declarar el nuevo método
 
   void SetMacEntity(MacEntity *mac);
   MacEntity* GetMacEntity(void);
@@ -77,13 +79,16 @@ public:
   double ComputeBSRGrantTDSchedulingMetric(EnbMacEntity::MsgToSchedule *bsrGrant);
 
   void Msg2NormalPriorityScheduling(void);
+  
   void Msg4NormalPriorityScheduling(void);
   void BsrGrantNormalPriorityScheduling(void);
 
   void Msg2TimePriorityScheduling(void);
   void Msg4TimePriorityScheduling(void);
-
+  
+  
   void Msg2PriorityScheduling(void);
+  void collision_priority(void);
   void Msg4PriorityScheduling(void);
 
   void RAP_Scheduling(void); // RA-Prioritized Algorithm (RAP)
@@ -92,6 +97,7 @@ public:
   void PPA_Scheduling(void);
   void ePPA_Scheduling(void);
   void MinAL_Algorithm(void);
+  void collision_detect(void);
 
   void NMScheduling1(void);
 
@@ -196,4 +202,3 @@ private:
 };
 
 #endif
-
