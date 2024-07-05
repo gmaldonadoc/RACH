@@ -100,7 +100,7 @@ static void Scenario_12(int seed, int raMethod, double radius, int ulBW, int dlB
   /**/
   enb->SetRrmEntity();
   enb->GetRrmEntity()->SetPdcchScheduler();
-  enb->GetRrmEntity()->GetPdcchScheduler()->SetPDCCHModeType(1);
+  enb->GetRrmEntity()->GetPdcchScheduler()->SetPDCCHModeType(7);
   enb->GetRrmEntity()->GetPdcchScheduler()->SetMaxMSGs4ToSchedule(4);
   enb->GetRrmEntity()->GetPdcchScheduler()->SetLimitUEsToFD(true);
   enb->GetRrmEntity()->GetPdcchScheduler()->SetnUEsToDL(10);
