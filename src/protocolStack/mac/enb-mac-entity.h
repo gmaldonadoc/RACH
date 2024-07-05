@@ -79,6 +79,10 @@ public:
 
   void SetRARWindowSize(int RARWindowSize);
   void SetBackoffIndicator(int index);
+  
+  // Definir las prioridades
+  static const int LOW_PRIORITY = 0;
+  static const int HIGH_PRIORITY = 1;
   // *******************Nuevo método para recibir preámbulos de acceso aleatorio********************//
   //void EnbMacEntity::ReceiveRandomAccessPreambleMessage(RAPreambleIdealControlMessage *RAPreamble);
   void ReceiveRandomAccessPreambleMessage(RAPreambleIdealControlMessage *RAPreamble);
@@ -109,7 +113,9 @@ public:
     double m_timePriority;
     double m_delay;
     double m_ar;
-
+    bool m_collision;
+    int m_priority; // 1 para alta prioridad, 0 para baja prioridad
+    
     NetworkNode *m_destination;
   };
 
